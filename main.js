@@ -15,8 +15,8 @@ fetch('./HolyBibleKRV.json')
 function populateBookSelect() {
   bibleData.forEach(book => {
     const option = document.createElement('option');
-    option.value = book.book;
-    option.textContent = book.book_name;
+    option.value = book.bcode;
+    option.textContent = book.name;
     bookSelect.appendChild(option);
   });
   bookSelect.addEventListener('change', () => {
@@ -30,9 +30,9 @@ function populateBookSelect() {
 }
 
 function populateChapterSelect() {
-  const selectedBook = bibleData.find(book => book.book === bookSelect.value);
+  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
   chapterSelect.innerHTML = '';
-  for (let i = 1; i <= selectedBook.chapters.length; i++) {
+  for (let i = 1; i <= Object.keys(selectedBook.chapters).length; i++) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
@@ -45,10 +45,10 @@ function populateChapterSelect() {
 }
 
 function populateVerseSelect() {
-  const selectedBook = bibleData.find(book => book.book === bookSelect.value);
-  const selectedChapter = selectedBook.chapters[chapterSelect.value - 1];
+  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
+  const selectedChapter = selectedBook.chapters[chapterSelect.value];
   verseSelect.innerHTML = '';
-  for (let i = 1; i <= selectedChapter.verses.length; i++) {
+  for (let i = 1; i <= Object.keys(selectedChapter).length; i++) {
     const option = document.createElement('option');
     option.value = i;
     option.textContent = i;
@@ -58,8 +58,8 @@ function populateVerseSelect() {
 }
 
 function displayVerse() {
-  const selectedBook = bibleData.find(book => book.book === bookSelect.value);
-  const selectedChapter = selectedBook.chapters[chapterSelect.value - 1];
-  const selectedVerse = selectedChapter.verses[verseSelect.value - 1];
-  verseDisplay.textContent = selectedVerse.verse;
+  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
+  const selectedChapter = selectedBook.chapters[chapterSelect.value];
+  const selectedVerse = selectedChapter[verseSelect.value];
+  verseDisplay.textContent = selectedVerse;
 }
