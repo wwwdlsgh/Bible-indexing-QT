@@ -1,23 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bible Verse Selector (KRV)</title>
+  <title>Bible Verse Search</title>
   <link href='/style.css' rel='stylesheet'>
 </head>
 <body>
-  <div class="container">
-    <h1>Bible Verse Selector (KRV)</h1>
-
-    <div class="controls">
-      <select id="bookSelect"></select>
-      <select id="chapterSelect" disabled></select>
-      <select id="verseSelect" disabled></select>
-    </div>
-
-    <div id="verseDisplay" class="verse-display"></div>
+  <h1>Bible Verse Search</h1>
+  <div class="selection-container">
+    <select id="bookSelect"></select>
+    <select id="chapterSelect"></select>
+    <select id="verseSelect"></select>
   </div>
+  <div id="verseDisplay"></div>
   <script defer type="text/javascript" src="/main.js"></script>
 </body>
 </html>
