@@ -164,7 +164,9 @@ function populateVerseSelect() {
   }
 }
 
-async function searchBible() {
+async function searchBible(preserveScroll = false) {
+  const scrollTop = preserveScroll ? window.scrollY : 0;
+
   const selectedBookName = bookSelect.value;
   const selectedChapterNumber = chapterSelect.value;
   const selectedVerseNumber = verseSelect.value;
@@ -219,6 +221,10 @@ async function searchBible() {
   }
 
   displayVerseWithContext();
+
+  if(preserveScroll) {
+    window.scrollTo(0, scrollTop);
+  }
 }
 
 function displayVerseWithContext() {
@@ -259,7 +265,8 @@ function displayVerseWithContext() {
   updateNavigationButtons();
 }
 
-async function goToPreviousVerse() {
+async function goToPreviousVerse(event) {
+  event.preventDefault();
   if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
   let oldBookIndex = currentBookIndex;
@@ -300,12 +307,14 @@ async function goToPreviousVerse() {
 
   bookSelect.addEventListener('change', populateChapterSelect);
   chapterSelect.addEventListener('change', populateVerseSelect);
-  verseSelect.addEventListener('change', searchBible);
+  verseSelect.addEventListener('change', () => searchBible(false));
 
   displayVerseWithContext();
+  
 }
 
-async function goToNextVerse() {
+async function goToNextVerse(event) {
+  event.preventDefault();
   if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
   const currentChapter = currentBookData.chapters[currentChapterIndex];
@@ -344,7 +353,7 @@ async function goToNextVerse() {
 
   bookSelect.addEventListener('change', populateChapterSelect);
   chapterSelect.addEventListener('change', populateVerseSelect);
-  verseSelect.addEventListener('change', searchBible);
+  verseSelect.addEventListener('change', () => searchBible(false));
 
   displayVerseWithContext();
 }
@@ -376,9 +385,9 @@ function updateNavigationButtons() {
 
 bookSelect.addEventListener('change', populateChapterSelect);
 chapterSelect.addEventListener('change', populateVerseSelect);
-searchButton.addEventListener('click', searchBible);
+searchButton.addEventListener('click', () => searchBible(false));
 prevVerseButton.addEventListener('click', goToPreviousVerse);
 nextVerseButton.addEventListener('click', goToNextVerse);
-verseSelect.addEventListener('change', searchBible);
+verseSelect.addEventListener('change', () => searchBible(false));
 
 populateBookSelect();
