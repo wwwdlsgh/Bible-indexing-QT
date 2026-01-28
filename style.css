@@ -93,3 +93,62 @@ h1 {
 /* #result-container p {
   margin: 5px 0;
 } */
+
+@media (max-width: 600px) {
+  body {
+    margin: 10px;
+    font-size: 1.1em; /* Increase base font size */
+  }
+
+  h1 {
+    font-size: 1.8em; /* Make heading larger */
+  }
+
+  .search-container {
+    flex-wrap: wrap; /* Allow items to wrap to next line */
+    justify-content: center; /* Center items when wrapped */
+  }
+
+  .search-container select,
+  .search-container button {
+    width: 100%; /* Make selects and buttons take full width */
+    margin-bottom: 10px; /* Add space between stacked items */
+    font-size: 1.2rem; /* Increase font size for inputs/buttons */
+    padding: 12px 15px; /* Increase padding */
+  }
+
+  /* Specific adjustment for select elements to make them look consistent when full-width */
+  .search-container select {
+    -webkit-appearance: none; /* Remove default arrow on some browsers */
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%205%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.7%205.8%2013.2%205.8s9.3-1.9%2013.2-5.8l128-128c3.6-3.8%205.4-8.1%205.4-13.2%200-5-1.8-9.3-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+  }
+
+
+  .navigation-container {
+    flex-direction: column; /* Stack navigation buttons vertically */
+    gap: 10px; /* Adjust gap for stacked buttons */
+  }
+
+  .navigation-container button {
+    width: 100%; /* Make navigation buttons take full width */
+    font-size: 1.2rem; /* Increase font size for nav buttons */
+    padding: 12px 15px; /* Increase padding */
+  }
+
+  #result-container {
+    padding: 15px; /* Adjust padding for result container */
+  }
+
+  #main-verse p {
+    font-size: 1.4rem; /* Larger main verse text */
+  }
+
+  .context-verse {
+    font-size: 1.1rem; /* Larger context verse text */
+  }
+}
