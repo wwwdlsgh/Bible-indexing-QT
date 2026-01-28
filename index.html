@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bible Verse Search</title>
-  <link href='/style.css' rel='stylesheet'>
+  <title>KRV Bible Search</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <h1>Bible Verse Search</h1>
-  <div class="selection-container">
-    <select id="bookSelect"></select>
-    <select id="chapterSelect"></select>
-    <select id="verseSelect"></select>
+  <h1>KRV 성경 검색</h1>
+  <div class="search-container">
+    <select id="book-select"></select>
+    <input type="number" id="chapter" placeholder="장">
+    <input type="number" id="verse" placeholder="절">
+    <button id="search-button">검색</button>
   </div>
-  <div id="verseDisplay"></div>
-  <script defer type="text/javascript" src="/main.js"></script>
+  <div id="result-container">
+  </div>
+
+  <script src="main.js"></script>
 </body>
 </html>

@@ -3,16 +3,20 @@ body {
   margin: 20px;
 }
 
-.selection-container {
+.search-container {
   margin-bottom: 20px;
 }
 
-select {
+input, select {
+  padding: 8px;
   margin-right: 10px;
-  padding: 5px;
 }
 
-#verseDisplay {
-  white-space: pre-wrap;
-  font-size: 1.2em;
+button {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+#result-container p {
+  margin: 5px 0;
 }

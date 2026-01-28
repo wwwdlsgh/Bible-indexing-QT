@@ -1,65 +1,75 @@
-const bookSelect = document.getElementById('bookSelect');
-const chapterSelect = document.getElementById('chapterSelect');
-const verseSelect = document.getElementById('verseSelect');
-const verseDisplay = document.getElementById('verseDisplay');
+const bookSelect = document.getElementById('book-select');
+const chapterInput = document.getElementById('chapter');
+const verseInput = document.getElementById('verse');
+const searchButton = document.getElementById('search-button');
+const resultContainer = document.getElementById('result-container');
 
-let bibleData;
-
-fetch('./HolyBibleKRV.json')
-  .then(response => response.json())
-  .then(data => {
-    bibleData = data;
-    populateBookSelect();
-  });
-
-function populateBookSelect() {
-  bibleData.forEach(book => {
-    const option = document.createElement('option');
-    option.value = book.bcode;
-    option.textContent = book.name;
-    bookSelect.appendChild(option);
-  });
-  bookSelect.addEventListener('change', () => {
-    populateChapterSelect();
-    populateVerseSelect();
-    displayVerse();
-  });
-  populateChapterSelect();
-  populateVerseSelect();
-  displayVerse();
-}
-
-function populateChapterSelect() {
-  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
-  chapterSelect.innerHTML = '';
-  for (let i = 1; i <= Object.keys(selectedBook.chapters).length; i++) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = i;
-    chapterSelect.appendChild(option);
+async function populateBookSelect() {
+  try {
+    const response = await fetch('Bible_KRV/books.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const books = await response.json();
+    for (const book of books) {
+      const option = document.createElement('option');
+      option.value = book;
+      option.textContent = book;
+      bookSelect.appendChild(option);
+    }
+  } catch (error) {
+    console.error('Error fetching book list:', error);
+    resultContainer.innerHTML = '책 목록을 불러오는 데 실패했습니다.';
   }
-  chapterSelect.addEventListener('change', () => {
-    populateVerseSelect();
-    displayVerse();
-  });
 }
 
-function populateVerseSelect() {
-  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
-  const selectedChapter = selectedBook.chapters[chapterSelect.value];
-  verseSelect.innerHTML = '';
-  for (let i = 1; i <= Object.keys(selectedChapter).length; i++) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = i;
-    verseSelect.appendChild(option);
+async function searchBible() {
+  const selectedBook = bookSelect.value;
+  const chapter = chapterInput.value;
+  const verse = verseInput.value;
+
+  if (!chapter) {
+    resultContainer.innerHTML = '장을 입력해주세요.';
+    return;
   }
-  verseSelect.addEventListener('change', displayVerse);
+
+  resultContainer.innerHTML = '검색 중...';
+
+  try {
+    const response = await fetch(`Bible_KRV/${selectedBook}.json`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const bookData = await response.json();
+
+    const chapterData = bookData.chapters.find(c => c.chapter == chapter);
+
+    if (!chapterData) {
+      resultContainer.innerHTML = '장을 찾을 수 없습니다.';
+      return;
+    }
+
+    let resultHTML = '';
+    if (verse) {
+      const verseData = chapterData.verses.find(v => v.verse == verse);
+      if (verseData) {
+        resultHTML = `<p>${selectedBook} ${chapter}:${verse} - ${verseData.text}</p>`;
+      } else {
+        resultHTML = '절을 찾을 수 없습니다.';
+      }
+    } else {
+      chapterData.verses.forEach(v => {
+        resultHTML += `<p>${selectedBook} ${chapter}:${v.verse} - ${v.text}</p>`;
+      });
+    }
+    resultContainer.innerHTML = resultHTML;
+
+  } catch (error) {
+    console.error('Error fetching Bible data:', error);
+    resultContainer.innerHTML = '성경 데이터를 불러오는 데 실패했습니다.';
+  }
 }
 
-function displayVerse() {
-  const selectedBook = bibleData.find(book => book.bcode == bookSelect.value);
-  const selectedChapter = selectedBook.chapters[chapterSelect.value];
-  const selectedVerse = selectedChapter[verseSelect.value];
-  verseDisplay.textContent = selectedVerse;
-}
+searchButton.addEventListener('click', searchBible);
+
+populateBookSelect();
