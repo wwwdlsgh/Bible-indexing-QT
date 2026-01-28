@@ -37,31 +37,30 @@ h1 {
   background-color: #45a049;
 }
 
-.navigation-container {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-  gap: 15px;
+.main-verse-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
 }
 
-.navigation-container button {
-  padding: 10px 15px;
-  border: 1px solid #007bff;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+.nav-arrow {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #007bff;
+    cursor: pointer;
+    padding: 0 10px;
+    transition: color 0.3s ease;
 }
 
-.navigation-container button:hover:not(:disabled) {
-  background-color: #0056b3;
+.nav-arrow:hover:not(:disabled) {
+    color: #0056b3;
 }
 
-.navigation-container button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.nav-arrow:disabled {
+    color: #ccc;
+    cursor: not-allowed;
 }
 
 #result-container {
@@ -77,6 +76,11 @@ h1 {
   margin: 8px 0; /* Adjust margin for paragraphs inside result container */
 }
 
+#main-verse {
+    flex-grow: 1;
+    text-align: center;
+}
+
 #main-verse p {
   font-size: 1.2rem;
   font-weight: bold;
@@ -88,11 +92,6 @@ h1 {
   color: #888; /* Lighter color for contextual verses */
   font-size: 0.95rem;
 }
-
-/* Remove old conflicting style if it exists */
-/* #result-container p {
-  margin: 5px 0;
-} */
 
 @media (max-width: 600px) {
   body {
@@ -117,27 +116,23 @@ h1 {
     padding: 10px 15px;
   }
 
-  /* Specific adjustment for select elements to make them look consistent when full-width */
   .search-container select {
-    -webkit-appearance: none; /* Remove default arrow on some browsers */
+    -webkit-appearance: none; 
     -moz-appearance: none;
     appearance: none;
     background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13.2-5.4H18.6c-5%200-9.3%201.8-13.2%205.4A17.6%2017.6%200%200%200%200%2082.6c0%205%201.8%209.3%205.4%2013.2l128%20128c3.9%203.9%208.7%205.8%2013.2%205.8s9.3-1.9%2013.2-5.8l128-128c3.6-3.8%205.4-8.1%205.4-13.2%200-5-1.8-9.3-5.4-13.2z%22%2F%3E%3C%2Fsvg%3E');
     background-repeat: no-repeat;
-    background-position: right 10px center; /* Kept fixed */
-    background-size: 12px; /* Kept fixed */
+    background-position: right 10px center; 
+    background-size: 12px; 
   }
 
-
-  .navigation-container {
-    flex-direction: column; /* Stack navigation buttons vertically */
-    gap: 10px;
+  .main-verse-container {
+      gap: 5px;
   }
 
-  .navigation-container button {
-    width: 100%; /* Make navigation buttons take full width */
-    font-size: 1rem;
-    padding: 10px 15px;
+  .nav-arrow {
+      font-size: 1.5rem;
+      padding: 0 5px;
   }
 
   #result-container {

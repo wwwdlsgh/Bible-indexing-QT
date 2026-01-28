@@ -9,7 +9,7 @@ const nextVerseButton = document.getElementById('next-verse-button');
 const contextTop = document.getElementById('context-top');
 const mainVerseDiv = document.getElementById('main-verse');
 const contextBottom = document.getElementById('context-bottom');
-const resultContainer = document.getElementById('result-container'); // This is the parent container
+const resultContainer = document.getElementById('result-container'); 
 
 let allBooksList = [];
 let currentBookData = null;
@@ -48,7 +48,6 @@ async function populateBookSelect() {
     bookSelect.appendChild(option);
   }
 
-  // If there's a book already selected (e.g., after navigation), restore it
   if (currentBookIndex !== -1 && allBooksList[currentBookIndex]) {
       bookSelect.value = allBooksList[currentBookIndex];
   }
@@ -103,9 +102,7 @@ async function populateChapterSelect() {
       chapterSelect.appendChild(option);
     });
 
-    // If there's a chapter already selected, restore it
     if (currentChapterIndex !== -1 && currentBookData.chapters[currentChapterIndex] && currentBookData.chapters[currentChapterIndex].chapter == chapterSelect.value) {
-      // Do nothing, chapterSelect.value is already correct from navigation
     } else if (currentChapterIndex !== -1 && currentBookData.chapters[currentChapterIndex]) {
         chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
     }
@@ -161,12 +158,10 @@ function populateVerseSelect() {
     });
 
     if (currentVerseIndex !== -1 && chapterData.verses[currentVerseIndex] && chapterData.verses[currentVerseIndex].verse == verseSelect.value) {
-      // Do nothing, verseSelect.value is already correct from navigation
     } else if (currentVerseIndex !== -1 && chapterData.verses[currentVerseIndex]) {
         verseSelect.value = chapterData.verses[currentVerseIndex].verse;
     }
   }
-  // currentVerseIndex = -1; // This line was incorrectly resetting the index, causing navigation issues.
 }
 
 async function searchBible() {
@@ -267,23 +262,16 @@ function displayVerseWithContext() {
 async function goToPreviousVerse() {
   if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
-  // Logic to update currentBookIndex, currentChapterIndex, currentVerseIndex
-  // ...
   let oldBookIndex = currentBookIndex;
   let oldChapterIndex = currentChapterIndex;
   let oldVerseIndex = currentVerseIndex;
 
-  // Try to go to previous verse in current chapter
   if (currentVerseIndex > 0) {
     currentVerseIndex--;
-  }
-  // Try to go to previous chapter in current book
-  else if (currentChapterIndex > 0) {
+  } else if (currentChapterIndex > 0) {
     currentChapterIndex--;
     currentVerseIndex = currentBookData.chapters[currentChapterIndex].verses.length - 1;
-  }
-  // Try to go to previous book
-  else if (currentBookIndex > 0) {
+  } else if (currentBookIndex > 0) {
     currentBookIndex--;
     const prevBookName = allBooksList[currentBookIndex];
     try {
@@ -297,24 +285,19 @@ async function goToPreviousVerse() {
           mainVerseDiv.innerHTML = '<p>이전 책 데이터를 불러오는 데 실패했습니다.</p>';
           return;    }
   } else {
-    // Cannot go further back
     return;
   }
 
-  // Temporarily remove event listeners to prevent unwanted side effects
   bookSelect.removeEventListener('change', populateChapterSelect);
   chapterSelect.removeEventListener('change', populateVerseSelect);
   verseSelect.removeEventListener('change', searchBible);
 
   bookSelect.value = allBooksList[currentBookIndex];
-  // Await populateChapterSelect before setting chapterSelect.value
   await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  // populateVerseSelect might be async, ensure it completes before setting verseSelect.value
   populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
-  // Re-add event listeners
   bookSelect.addEventListener('change', populateChapterSelect);
   chapterSelect.addEventListener('change', populateVerseSelect);
   verseSelect.addEventListener('change', searchBible);
@@ -327,17 +310,12 @@ async function goToNextVerse() {
 
   const currentChapter = currentBookData.chapters[currentChapterIndex];
 
-  // Try to go to next verse in current chapter
   if (currentVerseIndex < currentChapter.verses.length - 1) {
     currentVerseIndex++;
-  }
-  // Try to go to next chapter in current book
-  else if (currentChapterIndex < currentBookData.chapters.length - 1) {
+  } else if (currentChapterIndex < currentBookData.chapters.length - 1) {
     currentChapterIndex++;
     currentVerseIndex = 0;
-  }
-  // Try to go to next book
-  else if (currentBookIndex < allBooksList.length - 1) {
+  } else if (currentBookIndex < allBooksList.length - 1) {
     currentBookIndex++;
     const nextBookName = allBooksList[currentBookIndex];
     try {
@@ -351,11 +329,9 @@ async function goToNextVerse() {
           mainVerseDiv.innerHTML = '<p>다음 책 데이터를 불러오는 데 실패했습니다.</p>';
           return;    }
   } else {
-    // Cannot go further forward
     return;
   }
 
-  // Temporarily remove event listeners to prevent unwanted side effects
   bookSelect.removeEventListener('change', populateChapterSelect);
   chapterSelect.removeEventListener('change', populateVerseSelect);
   verseSelect.removeEventListener('change', searchBible);
@@ -366,7 +342,6 @@ async function goToNextVerse() {
   populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
-  // Re-add event listeners
   bookSelect.addEventListener('change', populateChapterSelect);
   chapterSelect.addEventListener('change', populateVerseSelect);
   verseSelect.addEventListener('change', searchBible);
@@ -383,7 +358,6 @@ function updateNavigationButtons() {
   }
 
   let canGoPrev = false;
-  // Can go prev if not first verse of first chapter of first book
   if (currentVerseIndex > 0 || currentChapterIndex > 0 || currentBookIndex > 0) {
     canGoPrev = true;
   }
@@ -391,7 +365,6 @@ function updateNavigationButtons() {
 
   let canGoNext = false;
   const currentChapter = currentBookData.chapters[currentChapterIndex];
-  // Can go next if not last verse of last chapter of last book
   if (currentVerseIndex < currentChapter.verses.length - 1 ||
       currentChapterIndex < currentBookData.chapters.length - 1 ||
       currentBookIndex < allBooksList.length - 1) {
@@ -401,14 +374,11 @@ function updateNavigationButtons() {
 }
 
 
-// Event Listeners
 bookSelect.addEventListener('change', populateChapterSelect);
 chapterSelect.addEventListener('change', populateVerseSelect);
 searchButton.addEventListener('click', searchBible);
 prevVerseButton.addEventListener('click', goToPreviousVerse);
 nextVerseButton.addEventListener('click', goToNextVerse);
-// Optionally trigger search when a specific verse is selected
 verseSelect.addEventListener('change', searchBible);
 
-// Initial population
 populateBookSelect();

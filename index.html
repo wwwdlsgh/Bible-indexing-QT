@@ -14,14 +14,13 @@
     <button id="search-button">검색</button>
   </div>
 
-  <div class="navigation-container">
-    <button id="prev-verse-button" disabled>이전 절</button>
-    <button id="next-verse-button" disabled>다음 절</button>
-  </div>
-
   <div id="result-container">
     <div id="context-top"></div>
-    <div id="main-verse"></div>
+    <div class="main-verse-container">
+        <button id="prev-verse-button" class="nav-arrow" disabled>&#9664;</button>
+        <div id="main-verse"></div>
+        <button id="next-verse-button" class="nav-arrow" disabled>&#9654;</button>
+    </div>
     <div id="context-bottom"></div>
   </div>
 
