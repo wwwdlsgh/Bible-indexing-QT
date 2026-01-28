@@ -228,6 +228,8 @@ async function searchBible(preserveScroll = false) {
 }
 
 function displayVerseWithContext() {
+  const scrollTop = window.scrollY;
+
   contextTop.innerHTML = '';
   mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
@@ -263,15 +265,12 @@ function displayVerseWithContext() {
   }
 
   updateNavigationButtons();
+  window.scrollTo(0, scrollTop);
 }
 
 async function goToPreviousVerse(event) {
   event.preventDefault();
   if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
-
-  let oldBookIndex = currentBookIndex;
-  let oldChapterIndex = currentChapterIndex;
-  let oldVerseIndex = currentVerseIndex;
 
   if (currentVerseIndex > 0) {
     currentVerseIndex--;
@@ -295,22 +294,7 @@ async function goToPreviousVerse(event) {
     return;
   }
 
-  bookSelect.removeEventListener('change', populateChapterSelect);
-  chapterSelect.removeEventListener('change', populateVerseSelect);
-  verseSelect.removeEventListener('change', searchBible);
-
-  bookSelect.value = allBooksList[currentBookIndex];
-  await populateChapterSelect();
-  chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  populateVerseSelect();
-  verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
-
-  bookSelect.addEventListener('change', populateChapterSelect);
-  chapterSelect.addEventListener('change', populateVerseSelect);
-  verseSelect.addEventListener('change', () => searchBible(false));
-
-  displayVerseWithContext();
-  
+  await updateUIForNavigation();
 }
 
 async function goToNextVerse(event) {
@@ -341,21 +325,29 @@ async function goToNextVerse(event) {
     return;
   }
 
-  bookSelect.removeEventListener('change', populateChapterSelect);
-  chapterSelect.removeEventListener('change', populateVerseSelect);
-  verseSelect.removeEventListener('change', searchBible);
+ await updateUIForNavigation();
+}
+
+async function updateUIForNavigation() {
+  const scrollTop = window.scrollY;
+
+  bookSelect.removeEventListener('change', handleBookChange);
+  chapterSelect.removeEventListener('change', handleChapterChange);
+  verseSelect.removeEventListener('change', handleVerseChange);
 
   bookSelect.value = allBooksList[currentBookIndex];
-  await populateChapterSelect();
+  await populateChapterSelect(); 
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
   populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
-  bookSelect.addEventListener('change', populateChapterSelect);
-  chapterSelect.addEventListener('change', populateVerseSelect);
-  verseSelect.addEventListener('change', () => searchBible(false));
-
   displayVerseWithContext();
+
+  bookSelect.addEventListener('change', handleBookChange);
+  chapterSelect.addEventListener('change', handleChapterChange);
+  verseSelect.addEventListener('change', handleVerseChange);
+  
+  window.scrollTo(0, scrollTop);
 }
 
 function updateNavigationButtons() {
@@ -382,12 +374,15 @@ function updateNavigationButtons() {
   nextVerseButton.disabled = !canGoNext;
 }
 
+const handleBookChange = () => populateChapterSelect();
+const handleChapterChange = () => populateVerseSelect();
+const handleVerseChange = () => searchBible(false);
 
-bookSelect.addEventListener('change', populateChapterSelect);
-chapterSelect.addEventListener('change', populateVerseSelect);
+bookSelect.addEventListener('change', handleBookChange);
+chapterSelect.addEventListener('change', handleChapterChange);
 searchButton.addEventListener('click', () => searchBible(false));
 prevVerseButton.addEventListener('click', goToPreviousVerse);
 nextVerseButton.addEventListener('click', goToNextVerse);
-verseSelect.addEventListener('change', () => searchBible(false));
+verseSelect.addEventListener('change', handleVerseChange);
 
 populateBookSelect();
