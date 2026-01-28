@@ -166,7 +166,7 @@ function populateVerseSelect() {
         verseSelect.value = chapterData.verses[currentVerseIndex].verse;
     }
   }
-  currentVerseIndex = -1;
+  // currentVerseIndex = -1; // This line was incorrectly resetting the index, causing navigation issues.
 }
 
 async function searchBible() {
@@ -267,6 +267,12 @@ function displayVerseWithContext() {
 async function goToPreviousVerse() {
   if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
+  // Logic to update currentBookIndex, currentChapterIndex, currentVerseIndex
+  // ...
+  let oldBookIndex = currentBookIndex;
+  let oldChapterIndex = currentChapterIndex;
+  let oldVerseIndex = currentVerseIndex;
+
   // Try to go to previous verse in current chapter
   if (currentVerseIndex > 0) {
     currentVerseIndex--;
@@ -295,11 +301,23 @@ async function goToPreviousVerse() {
     return;
   }
 
+  // Temporarily remove event listeners to prevent unwanted side effects
+  bookSelect.removeEventListener('change', populateChapterSelect);
+  chapterSelect.removeEventListener('change', populateVerseSelect);
+  verseSelect.removeEventListener('change', searchBible);
+
   bookSelect.value = allBooksList[currentBookIndex];
+  // Await populateChapterSelect before setting chapterSelect.value
   await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
+  // populateVerseSelect might be async, ensure it completes before setting verseSelect.value
   populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
+
+  // Re-add event listeners
+  bookSelect.addEventListener('change', populateChapterSelect);
+  chapterSelect.addEventListener('change', populateVerseSelect);
+  verseSelect.addEventListener('change', searchBible);
 
   displayVerseWithContext();
 }
@@ -337,11 +355,21 @@ async function goToNextVerse() {
     return;
   }
 
+  // Temporarily remove event listeners to prevent unwanted side effects
+  bookSelect.removeEventListener('change', populateChapterSelect);
+  chapterSelect.removeEventListener('change', populateVerseSelect);
+  verseSelect.removeEventListener('change', searchBible);
+
   bookSelect.value = allBooksList[currentBookIndex];
   await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
   populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
+
+  // Re-add event listeners
+  bookSelect.addEventListener('change', populateChapterSelect);
+  chapterSelect.addEventListener('change', populateVerseSelect);
+  verseSelect.addEventListener('change', searchBible);
 
   displayVerseWithContext();
 }
