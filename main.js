@@ -112,7 +112,7 @@ async function populateChapterSelect() {
     }
 
 
-    await populateVerseSelect(); // Ensure verses are populated after chapters
+    populateVerseSelect(); // Changed to not await here. It should be fine.
   } catch (error) {
     console.error('Error fetching book data for chapters:', error);
     resultContainer.innerHTML = '장의 데이터를 불러오는 데 실패했습니다.';
@@ -128,7 +128,7 @@ function populateVerseSelect() {
   nextVerseButton.disabled = true;
 
   const selectedChapterNumber = chapterSelect.value;
-  if (!selectedChapterNumber || !currentBookData || currentChapterIndex === -1) {
+  if (!selectedChapterNumber || !currentBookData) { // Removed currentChapterIndex === -1 check
     let defaultOption = document.createElement('option');
     defaultOption.value = "";
     defaultOption.textContent = "절을 선택하세요";
@@ -137,13 +137,9 @@ function populateVerseSelect() {
     return;
   }
 
-  // Ensure currentChapterIndex is up-to-date with the selected chapter
-  const actualChapterIndex = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
-  if (actualChapterIndex !== -1) {
-    currentChapterIndex = actualChapterIndex;
-  } else {
-    // This should ideally not happen if populateChapterSelect correctly set chapterSelect.value
-    // But as a safeguard:
+  // Determine currentChapterIndex based on selectedChapterNumber
+  const chapterIdx = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
+  if (chapterIdx === -1) {
     let defaultOption = document.createElement('option');
     defaultOption.value = "";
     defaultOption.textContent = "절을 선택하세요";
@@ -151,6 +147,7 @@ function populateVerseSelect() {
     currentVerseIndex = -1;
     return;
   }
+  currentChapterIndex = chapterIdx; // Update global state here
 
   const chapterData = currentBookData.chapters[currentChapterIndex];
 
@@ -187,9 +184,11 @@ async function searchBible() {
   }
 
   resultContainer.innerHTML = '검색 중...';
-  mainVerseDiv.innerHTML = '';
   contextTop.innerHTML = '';
+  mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
+  prevVerseButton.disabled = true;
+  nextVerseButton.disabled = true;
 
   // Ensure currentBookData is loaded and correct
   if (!currentBookData || currentBookData.book !== selectedBookName) {
@@ -207,6 +206,7 @@ async function searchBible() {
     }
   }
 
+  // Update currentChapterIndex based on selectedChapterNumber
   currentChapterIndex = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
   if (currentChapterIndex === -1) {
       resultContainer.innerHTML = '장을 찾을 수 없습니다.';
@@ -302,11 +302,9 @@ async function goToPreviousVerse() {
 
   // Update dropdowns to reflect new position
   bookSelect.value = allBooksList[currentBookIndex];
-  // Ensure the chapter dropdown is populated for the new book
-  await populateChapterSelect();
+  await populateChapterSelect(); // This will re-fetch book data if needed and populate chapter/verse
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  // Ensure the verse dropdown is populated for the new chapter
-  populateVerseSelect();
+  populateVerseSelect(); // Now currentChapterIndex is guaranteed to be set
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
   displayVerseWithContext();
@@ -350,7 +348,7 @@ async function goToNextVerse() {
   bookSelect.value = allBooksList[currentBookIndex];
   await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  populateVerseSelect();
+  populateVerseSelect(); // Now currentChapterIndex is guaranteed to be set
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
   displayVerseWithContext();
