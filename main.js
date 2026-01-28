@@ -9,7 +9,7 @@ const nextVerseButton = document.getElementById('next-verse-button');
 const contextTop = document.getElementById('context-top');
 const mainVerseDiv = document.getElementById('main-verse');
 const contextBottom = document.getElementById('context-bottom');
-const resultContainer = document.getElementById('result-container');
+const resultContainer = document.getElementById('result-container'); // This is the parent container
 
 let allBooksList = [];
 let currentBookData = null;
@@ -53,7 +53,6 @@ async function populateBookSelect() {
       bookSelect.value = allBooksList[currentBookIndex];
   }
 
-  // Always initialize chapters and verses after book select is populated
   await populateChapterSelect();
 }
 
@@ -111,8 +110,7 @@ async function populateChapterSelect() {
         chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
     }
 
-
-    populateVerseSelect(); // Changed to not await here. It should be fine.
+    populateVerseSelect();
   } catch (error) {
     console.error('Error fetching book data for chapters:', error);
     resultContainer.innerHTML = '장의 데이터를 불러오는 데 실패했습니다.';
@@ -128,7 +126,7 @@ function populateVerseSelect() {
   nextVerseButton.disabled = true;
 
   const selectedChapterNumber = chapterSelect.value;
-  if (!selectedChapterNumber || !currentBookData) { // Removed currentChapterIndex === -1 check
+  if (!selectedChapterNumber || !currentBookData) {
     let defaultOption = document.createElement('option');
     defaultOption.value = "";
     defaultOption.textContent = "절을 선택하세요";
@@ -137,7 +135,6 @@ function populateVerseSelect() {
     return;
   }
 
-  // Determine currentChapterIndex based on selectedChapterNumber
   const chapterIdx = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
   if (chapterIdx === -1) {
     let defaultOption = document.createElement('option');
@@ -147,7 +144,7 @@ function populateVerseSelect() {
     currentVerseIndex = -1;
     return;
   }
-  currentChapterIndex = chapterIdx; // Update global state here
+  currentChapterIndex = chapterIdx;
 
   const chapterData = currentBookData.chapters[currentChapterIndex];
 
@@ -163,14 +160,13 @@ function populateVerseSelect() {
       verseSelect.appendChild(option);
     });
 
-    // If there's a verse already selected, restore it
     if (currentVerseIndex !== -1 && chapterData.verses[currentVerseIndex] && chapterData.verses[currentVerseIndex].verse == verseSelect.value) {
       // Do nothing, verseSelect.value is already correct from navigation
     } else if (currentVerseIndex !== -1 && chapterData.verses[currentVerseIndex]) {
         verseSelect.value = chapterData.verses[currentVerseIndex].verse;
     }
   }
-  currentVerseIndex = -1; // Reset until an explicit search or navigation
+  currentVerseIndex = -1;
 }
 
 async function searchBible() {
@@ -179,18 +175,23 @@ async function searchBible() {
   const selectedVerseNumber = verseSelect.value;
 
   if (!selectedBookName || !selectedChapterNumber) {
-    resultContainer.innerHTML = '책과 장을 선택해주세요.';
+    resultContainer.innerHTML = '<p>책과 장을 선택해주세요.</p>'; // Put message inside a <p>
+    // Also clear the individual verse display divs
+    contextTop.innerHTML = '';
+    mainVerseDiv.innerHTML = '';
+    contextBottom.innerHTML = '';
+    prevVerseButton.disabled = true;
+    nextVerseButton.disabled = true;
     return;
   }
 
-  resultContainer.innerHTML = '검색 중...';
+  resultContainer.innerHTML = '<p>검색 중...</p>'; // Put message inside a <p>
   contextTop.innerHTML = '';
   mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
   prevVerseButton.disabled = true;
   nextVerseButton.disabled = true;
 
-  // Ensure currentBookData is loaded and correct
   if (!currentBookData || currentBookData.book !== selectedBookName) {
     try {
       const response = await fetch(`Bible_KRV/${selectedBookName}.json`);
@@ -201,15 +202,14 @@ async function searchBible() {
       currentBookIndex = allBooksList.indexOf(selectedBookName);
     } catch (error) {
       console.error('Error re-fetching book data for search:', error);
-      resultContainer.innerHTML = '성경 데이터를 불러오는 데 실패했습니다.';
+      resultContainer.innerHTML = '<p>성경 데이터를 불러오는 데 실패했습니다.</p>';
       return;
     }
   }
 
-  // Update currentChapterIndex based on selectedChapterNumber
   currentChapterIndex = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
   if (currentChapterIndex === -1) {
-      resultContainer.innerHTML = '장을 찾을 수 없습니다.';
+      resultContainer.innerHTML = '<p>장을 찾을 수 없습니다.</p>';
       return;
   }
   const chapterData = currentBookData.chapters[currentChapterIndex];
@@ -218,11 +218,11 @@ async function searchBible() {
   if (selectedVerseNumber) {
     currentVerseIndex = chapterData.verses.findIndex(v => v.verse == selectedVerseNumber);
   } else {
-    currentVerseIndex = 0; // Default to the first verse of the chapter
+    currentVerseIndex = 0;
   }
 
   if (currentVerseIndex === -1) {
-    resultContainer.innerHTML = '절을 찾을 수 없습니다.';
+    resultContainer.innerHTML = '<p>절을 찾을 수 없습니다.</p>';
     return;
   }
 
@@ -230,10 +230,11 @@ async function searchBible() {
 }
 
 function displayVerseWithContext() {
-  resultContainer.innerHTML = ''; // Clear general messages, assume display will be in divs
+  // resultContainer.innerHTML = ''; // REMOVED THIS LINE
   contextTop.innerHTML = '';
   mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
+  resultContainer.innerHTML = ''; // Clear general messages but not the verse display divs
 
   if (!currentBookData || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) {
     updateNavigationButtons();
@@ -269,7 +270,7 @@ function displayVerseWithContext() {
 }
 
 async function goToPreviousVerse() {
-  if (currentBookData === null) return;
+  if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
   // Try to go to previous verse in current chapter
   if (currentVerseIndex > 0) {
@@ -292,7 +293,7 @@ async function goToPreviousVerse() {
       currentVerseIndex = currentBookData.chapters[currentChapterIndex].verses.length - 1;
     } catch (error) {
       console.error('Error fetching previous book data:', error);
-      resultContainer.innerHTML = '이전 책 데이터를 불러오는 데 실패했습니다.';
+      resultContainer.innerHTML = '<p>이전 책 데이터를 불러오는 데 실패했습니다.</p>';
       return;
     }
   } else {
@@ -300,18 +301,17 @@ async function goToPreviousVerse() {
     return;
   }
 
-  // Update dropdowns to reflect new position
   bookSelect.value = allBooksList[currentBookIndex];
-  await populateChapterSelect(); // This will re-fetch book data if needed and populate chapter/verse
+  await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  populateVerseSelect(); // Now currentChapterIndex is guaranteed to be set
+  populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
   displayVerseWithContext();
 }
 
 async function goToNextVerse() {
-  if (currentBookData === null) return;
+  if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) return;
 
   const currentChapter = currentBookData.chapters[currentChapterIndex];
 
@@ -336,7 +336,7 @@ async function goToNextVerse() {
       currentVerseIndex = 0;
     } catch (error) {
       console.error('Error fetching next book data:', error);
-      resultContainer.innerHTML = '다음 책 데이터를 불러오는 데 실패했습니다.';
+      resultContainer.innerHTML = '<p>다음 책 데이터를 불러오는 데 실패했습니다.</p>';
       return;
     }
   } else {
@@ -344,31 +344,37 @@ async function goToNextVerse() {
     return;
   }
 
-  // Update dropdowns to reflect new position
   bookSelect.value = allBooksList[currentBookIndex];
   await populateChapterSelect();
   chapterSelect.value = currentBookData.chapters[currentChapterIndex].chapter;
-  populateVerseSelect(); // Now currentChapterIndex is guaranteed to be set
+  populateVerseSelect();
   verseSelect.value = currentBookData.chapters[currentChapterIndex].verses[currentVerseIndex].verse;
 
   displayVerseWithContext();
 }
 
 function updateNavigationButtons() {
+  prevVerseButton.disabled = true;
+  nextVerseButton.disabled = true;
+
+  if (currentBookData === null || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) {
+      return;
+  }
+
   let canGoPrev = false;
-  if (currentBookIndex > 0 || (currentBookIndex === 0 && currentChapterIndex > 0) || (currentBookIndex === 0 && currentChapterIndex === 0 && currentVerseIndex > 0)) {
+  // Can go prev if not first verse of first chapter of first book
+  if (currentVerseIndex > 0 || currentChapterIndex > 0 || currentBookIndex > 0) {
     canGoPrev = true;
   }
   prevVerseButton.disabled = !canGoPrev;
 
   let canGoNext = false;
-  if (currentBookData && currentChapterIndex !== -1 && currentVerseIndex !== -1) {
-    const currentChapter = currentBookData.chapters[currentChapterIndex];
-    if (currentVerseIndex < currentChapter.verses.length - 1 ||
-        currentChapterIndex < currentBookData.chapters.length - 1 ||
-        currentBookIndex < allBooksList.length - 1) {
-      canGoNext = true;
-    }
+  const currentChapter = currentBookData.chapters[currentChapterIndex];
+  // Can go next if not last verse of last chapter of last book
+  if (currentVerseIndex < currentChapter.verses.length - 1 ||
+      currentChapterIndex < currentBookData.chapters.length - 1 ||
+      currentBookIndex < allBooksList.length - 1) {
+    canGoNext = true;
   }
   nextVerseButton.disabled = !canGoNext;
 }
