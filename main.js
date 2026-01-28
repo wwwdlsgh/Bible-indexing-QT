@@ -26,7 +26,7 @@ async function fetchBookList() {
     allBooksList = await response.json();
   } catch (error) {
     console.error('Error fetching book list:', error);
-    resultContainer.innerHTML = '책 목록을 불러오는 데 실패했습니다.';
+    mainVerseDiv.innerHTML = '책 목록을 불러오는 데 실패했습니다.';
     return [];
   }
   return allBooksList;
@@ -113,7 +113,7 @@ async function populateChapterSelect() {
     populateVerseSelect();
   } catch (error) {
     console.error('Error fetching book data for chapters:', error);
-    resultContainer.innerHTML = '장의 데이터를 불러오는 데 실패했습니다.';
+    mainVerseDiv.innerHTML = '장의 데이터를 불러오는 데 실패했습니다.';
   }
 }
 
@@ -175,19 +175,16 @@ async function searchBible() {
   const selectedVerseNumber = verseSelect.value;
 
   if (!selectedBookName || !selectedChapterNumber) {
-    resultContainer.innerHTML = '<p>책과 장을 선택해주세요.</p>'; // Put message inside a <p>
-    // Also clear the individual verse display divs
+    mainVerseDiv.innerHTML = '<p>책과 장을 선택해주세요.</p>';
     contextTop.innerHTML = '';
-    mainVerseDiv.innerHTML = '';
     contextBottom.innerHTML = '';
     prevVerseButton.disabled = true;
     nextVerseButton.disabled = true;
     return;
   }
 
-  resultContainer.innerHTML = '<p>검색 중...</p>'; // Put message inside a <p>
+  mainVerseDiv.innerHTML = '<p>검색 중...</p>';
   contextTop.innerHTML = '';
-  mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
   prevVerseButton.disabled = true;
   nextVerseButton.disabled = true;
@@ -202,14 +199,14 @@ async function searchBible() {
       currentBookIndex = allBooksList.indexOf(selectedBookName);
     } catch (error) {
       console.error('Error re-fetching book data for search:', error);
-      resultContainer.innerHTML = '<p>성경 데이터를 불러오는 데 실패했습니다.</p>';
+      mainVerseDiv.innerHTML = '<p>성경 데이터를 불러오는 데 실패했습니다.</p>';
       return;
     }
   }
 
   currentChapterIndex = currentBookData.chapters.findIndex(c => c.chapter == selectedChapterNumber);
   if (currentChapterIndex === -1) {
-      resultContainer.innerHTML = '<p>장을 찾을 수 없습니다.</p>';
+      mainVerseDiv.innerHTML = '<p>장을 찾을 수 없습니다.</p>';
       return;
   }
   const chapterData = currentBookData.chapters[currentChapterIndex];
@@ -222,7 +219,7 @@ async function searchBible() {
   }
 
   if (currentVerseIndex === -1) {
-    resultContainer.innerHTML = '<p>절을 찾을 수 없습니다.</p>';
+    mainVerseDiv.innerHTML = '<p>절을 찾을 수 없습니다.</p>';
     return;
   }
 
@@ -230,11 +227,9 @@ async function searchBible() {
 }
 
 function displayVerseWithContext() {
-  // resultContainer.innerHTML = ''; // REMOVED THIS LINE
   contextTop.innerHTML = '';
   mainVerseDiv.innerHTML = '';
   contextBottom.innerHTML = '';
-  resultContainer.innerHTML = ''; // Clear general messages but not the verse display divs
 
   if (!currentBookData || currentBookIndex === -1 || currentChapterIndex === -1 || currentVerseIndex === -1) {
     updateNavigationButtons();
@@ -292,10 +287,9 @@ async function goToPreviousVerse() {
       currentChapterIndex = currentBookData.chapters.length - 1;
       currentVerseIndex = currentBookData.chapters[currentChapterIndex].verses.length - 1;
     } catch (error) {
-      console.error('Error fetching previous book data:', error);
-      resultContainer.innerHTML = '<p>이전 책 데이터를 불러오는 데 실패했습니다.</p>';
-      return;
-    }
+          console.error('Error fetching previous book data:', error);
+          mainVerseDiv.innerHTML = '<p>이전 책 데이터를 불러오는 데 실패했습니다.</p>';
+          return;    }
   } else {
     // Cannot go further back
     return;
@@ -335,10 +329,9 @@ async function goToNextVerse() {
       currentChapterIndex = 0;
       currentVerseIndex = 0;
     } catch (error) {
-      console.error('Error fetching next book data:', error);
-      resultContainer.innerHTML = '<p>다음 책 데이터를 불러오는 데 실패했습니다.</p>';
-      return;
-    }
+          console.error('Error fetching next book data:', error);
+          mainVerseDiv.innerHTML = '<p>다음 책 데이터를 불러오는 데 실패했습니다.</p>';
+          return;    }
   } else {
     // Cannot go further forward
     return;
