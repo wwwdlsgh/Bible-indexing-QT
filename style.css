@@ -96,12 +96,12 @@ h1 {
 
 @media (max-width: 600px) {
   body {
-    margin: 20px; /* Doubled from 10px */
-    font-size: 2.2em; /* Doubled from 1.1em */
+    margin: 40px; /* Doubled from 20px */
+    font-size: 4.4em; /* Doubled from 2.2em */
   }
 
   h1 {
-    font-size: 3.6em; /* Doubled from 1.8em */
+    font-size: 7.2em; /* Doubled from 3.6em */
   }
 
   .search-container {
@@ -112,9 +112,9 @@ h1 {
   .search-container select,
   .search-container button {
     width: 100%; /* Make selects and buttons take full width */
-    margin-bottom: 20px; /* Doubled from 10px */
-    font-size: 2.4rem; /* Doubled from 1.2rem */
-    padding: 24px 30px; /* Doubled from 12px 15px */
+    margin-bottom: 40px; /* Doubled from 20px */
+    font-size: 4.8rem; /* Doubled from 2.4rem */
+    padding: 48px 60px; /* Doubled from 24px 30px */
   }
 
   /* Specific adjustment for select elements to make them look consistent when full-width */
@@ -131,24 +131,24 @@ h1 {
 
   .navigation-container {
     flex-direction: column; /* Stack navigation buttons vertically */
-    gap: 20px; /* Doubled from 10px */
+    gap: 40px; /* Doubled from 20px */
   }
 
   .navigation-container button {
     width: 100%; /* Make navigation buttons take full width */
-    font-size: 2.4rem; /* Doubled from 1.2rem */
-    padding: 24px 30px; /* Doubled from 12px 15px */
+    font-size: 4.8rem; /* Doubled from 2.4rem */
+    padding: 48px 60px; /* Doubled from 24px 30px */
   }
 
   #result-container {
-    padding: 30px; /* Doubled from 15px */
+    padding: 60px; /* Doubled from 30px */
   }
 
   #main-verse p {
-    font-size: 2.8rem; /* Doubled from 1.4rem */
+    font-size: 5.6rem; /* Doubled from 2.8rem */
   }
 
   .context-verse {
-    font-size: 2.2rem; /* Doubled from 1.1rem */
+    font-size: 4.4rem; /* Doubled from 2.2rem */
   }
 }
